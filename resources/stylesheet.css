@@ -1,0 +1,33 @@
+QPushButton{
+    border: 1px solid black;
+    border-radius: 5px;
+    font-size: 24px;
+    height: 24px;
+    padding: 5px;
+    margin: 2px 6px;
+}
+
+
+QPushButton:hover{
+    border: 1px solid black;
+    background: rgba(123, 123, 123, 0.1);
+}
+
+QPushButton:pressed{
+    border: 1px solid black;
+    background: rgba(123, 123, 123, 0.8);
+}
+
+QLabel#label{
+    font-size: 20px;
+    font-weight: 200;
+    padding: 0;
+    margin: 0;
+}
+
+QSpinBox{
+    font-size: 24px;
+    border: 1px solid black;
+    border-radius: 4px;
+    text-align: center;
+}
