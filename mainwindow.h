@@ -26,9 +26,19 @@ private slots:
 
     void on_turnOffButton_pressed();
 
+    void on_recordButton_pressed();
+    void onTimerTimeout();
+
 private:
     Ui::MainWindow *ui;
     CameraThread   m_cameraThread;
+    QTimer *timer;
+    double time;
+    double totalTime;
+    int timeCount;
+    QFile *file;
+    QTextStream *streamOut;
+    QString fileTitle;
 };
 
 #endif // MAINWINDOW_H

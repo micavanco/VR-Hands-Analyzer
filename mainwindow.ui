@@ -267,7 +267,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit"/>
+          <widget class="QLineEdit" name="patientLineEdit"/>
          </item>
          <item>
           <spacer name="horizontalSpacer">
@@ -290,7 +290,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="spinBox_2">
+          <widget class="QSpinBox" name="attemptSpinBox">
            <property name="minimum">
             <number>1</number>
            </property>
