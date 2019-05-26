@@ -6,27 +6,32 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    connect(&m_cameraThread, SIGNAL(CameraStatus(QString)), ui->cameraStatusLabel, SLOT(setText(QString)));
+    connect(&m_cameraThread, SIGNAL(Coordinates(QString)), ui->coordinatesLabel, SLOT(setText(QString)));
 }
 
 MainWindow::~MainWindow()
 {
+    m_cameraThread.requestInterruption();
+    m_cameraThread.wait();
     delete ui;
 }
 
 
 void MainWindow::on_turnOnButton_pressed()
 {
-    using namespace Leap;
+    m_cameraThread.start();
+    ui->recordButton->setEnabled(true);
+    ui->turnOnButton->setEnabled(false);
+    ui->turnOffButton->setEnabled(true);
+}
 
-    SampleListener listener;
-    Controller controller;
-
-    controller.addListener(listener);
-
-        // Keep this process running until Enter is pressed
-    std::cout << "Press Enter to quit..." << std::endl;
-    std::cin.get();
-
-        // Remove the sample listener when done
-    controller.removeListener(listener);
+void MainWindow::on_turnOffButton_pressed()
+{
+    m_cameraThread.requestInterruption();
+    m_cameraThread.wait();
+    ui->turnOnButton->setEnabled(true);
+    ui->turnOffButton->setEnabled(false);
+    ui->recordButton->setEnabled(false);
 }

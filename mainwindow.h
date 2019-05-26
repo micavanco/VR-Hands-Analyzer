@@ -2,9 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "Leap.h"
 #include <QtDataVisualization>
-#include "samplelistener.h"
+
+#include "camerathread.h"
 
 using namespace QtDataVisualization;
 
@@ -24,8 +24,11 @@ public:
 private slots:
     void on_turnOnButton_pressed();
 
+    void on_turnOffButton_pressed();
+
 private:
     Ui::MainWindow *ui;
+    CameraThread   m_cameraThread;
 };
 
 #endif // MAINWINDOW_H

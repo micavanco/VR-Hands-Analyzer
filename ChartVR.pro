@@ -27,11 +27,13 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    samplelistener.cpp
+    samplelistener.cpp \
+    camerathread.cpp
 
 HEADERS += \
         mainwindow.h \
-    samplelistener.h
+    samplelistener.h \
+    camerathread.h
 
 FORMS += \
         mainwindow.ui

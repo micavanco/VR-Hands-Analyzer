@@ -2,14 +2,16 @@
 #define SAMPLELISTENER_H
 
 #include "Leap.h"
+#include <QString>
 
 using namespace Leap;
 
 class SampleListener : public Listener
-{
-public:
-virtual void onConnect(const Controller&);
-virtual void onFrame(const Controller&);
+{ 
+    public:
+    virtual void onFrame(const Controller&);
+private:
+
 };
 
 #endif // SAMPLELISTENER_H

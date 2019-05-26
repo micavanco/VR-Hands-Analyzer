@@ -1,8 +1,8 @@
 QPushButton{
     border: 1px solid black;
     border-radius: 5px;
-    font-size: 24px;
-    height: 24px;
+    font-size: 12px;
+    height: 12px;
     padding: 5px;
     margin: 2px 6px;
 }
@@ -18,16 +18,39 @@ QPushButton:pressed{
     background: rgba(123, 123, 123, 0.8);
 }
 
-QLabel#label{
-    font-size: 20px;
+QLabel{
+    font-size: 14px;
+    font-weight: 200;
+    padding: 0;
+    margin: 0;
+}
+
+QLabel#cameraStatusLabel{
+    font-size: 12px;
     font-weight: 200;
     padding: 0;
     margin: 0;
 }
 
 QSpinBox{
-    font-size: 24px;
+    font-size: 12px;
     border: 1px solid black;
     border-radius: 4px;
     text-align: center;
 }
+
+QLineEdit{
+    font-size: 12px;
+    border: 1px solid black;
+    border-radius: 4px;
+    text-align: center;
+}
+
+QWidget#MenuMain{
+    border: 1px solid grey;
+}
+
+QWidget#PatientMenu{
+    border: 1px solid grey;
+}
+
