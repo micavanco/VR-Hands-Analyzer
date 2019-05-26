@@ -191,7 +191,37 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="coordinatesLabel">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Right Hand</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="coordinatesRightLabel">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Left Hand</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="coordinatesLeftLabel">
            <property name="text">
             <string/>
            </property>

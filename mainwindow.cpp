@@ -8,7 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(&m_cameraThread, SIGNAL(CameraStatus(QString)), ui->cameraStatusLabel, SLOT(setText(QString)));
-    connect(&m_cameraThread, SIGNAL(Coordinates(QString)), ui->coordinatesLabel, SLOT(setText(QString)));
+    connect(&m_cameraThread, SIGNAL(CoordinatesRight(QString)), ui->coordinatesRightLabel, SLOT(setText(QString)));
+    connect(&m_cameraThread, SIGNAL(CoordinatesLeft(QString)), ui->coordinatesLeftLabel, SLOT(setText(QString)));
 }
 
 MainWindow::~MainWindow()
