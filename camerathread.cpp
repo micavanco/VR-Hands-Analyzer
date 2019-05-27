@@ -24,11 +24,11 @@ void CameraThread::run()
         if(rightHand.isRight())
             CoordinatesRight(QString("x: %1 y: %2 z: %3 deg: %4").arg(positionRight.x).arg(positionRight.y).arg(positionRight.z).arg((rightHand.grabAngle()*180)/3.14));
         else
-            CoordinatesRight(QString(""));
+            CoordinatesRight(QString("x: 0 y: 0 z: 0 deg: 0"));
         if(leftHand.isLeft())
             CoordinatesLeft(QString("x: %1 y: %2 z: %3 deg: %4").arg(positionLeft.x).arg(positionLeft.y).arg(positionLeft.z).arg((leftHand.grabAngle()*180)/3.14));
         else
-            CoordinatesLeft(QString(""));
+            CoordinatesLeft(QString("x: 0 y: 0 z: 0 deg: 0"));
     }
     CameraStatus("Camera is disconnected");
     m_controller.removeListener(m_listener);

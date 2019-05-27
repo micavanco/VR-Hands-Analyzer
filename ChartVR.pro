@@ -38,8 +38,8 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-INCLUDEPATH += "C:\Users\TRAF-BARAK\Desktop\LeapDeveloperKit_3.2.1+45911_win\LeapSDK\include"
-   LIBS += -L"C:\Users\TRAF-BARAK\Desktop\LeapDeveloperKit_3.2.1+45911_win\LeapSDK\lib\x64" \
+INCLUDEPATH += "C:\Users\admin\Desktop\LeapDeveloperKit_3.2.1+45911_win\LeapSDK\include"
+   LIBS += -L"C:\Users\admin\Desktop\LeapDeveloperKit_3.2.1+45911_win\LeapSDK\lib\x64" \
       -lLeap
 
 # Default rules for deployment.
