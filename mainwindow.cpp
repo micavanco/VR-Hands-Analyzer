@@ -7,6 +7,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    m_chartLeft = nullptr;
+    m_chartRight = nullptr;
+
     connect(&m_cameraThread, SIGNAL(CameraStatus(QString)), ui->cameraStatusLabel, SLOT(setText(QString)));
     connect(&m_cameraThread, SIGNAL(CoordinatesRight(QString)), ui->coordinatesRightLabel, SLOT(setText(QString)));
     connect(&m_cameraThread, SIGNAL(CoordinatesLeft(QString)), ui->coordinatesLeftLabel, SLOT(setText(QString)));
@@ -14,6 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    if(m_chartLeft != nullptr)
+        delete m_chartLeft;
+    if(m_chartRight != nullptr)
+        delete m_chartRight;
     m_cameraThread.requestInterruption();
     m_cameraThread.wait();
     delete ui;
@@ -105,6 +112,13 @@ void MainWindow::on_loadPatientFileButton_pressed()
 
     QStringList filenames = filename.split("/");
     filename = filenames[filenames.length()-1];
+
+    if(m_filePatientStorageLeftX.contains(filename))
+    {
+        ui->filePatientLabelInfo->setText("This file already exists!");
+        return;
+    }
+
     streamOut = new QTextStream(file);
     streamOut->readLine();
 
@@ -154,10 +168,10 @@ void MainWindow::on_loadPatientFileButton_pressed()
     m_filePatientStorageLeftZ.insert(filename, arrayLeftZ);
     m_filePatientStorageLeftDeg.insert(filename, arrayLeftDeg);
 
-    m_filePatientStorageRightX.insert(filename, arrayLeftX);
-    m_filePatientStorageRightY.insert(filename, arrayLeftY);
-    m_filePatientStorageRightZ.insert(filename, arrayLeftZ);
-    m_filePatientStorageRightDeg.insert(filename, arrayLeftDeg);
+    m_filePatientStorageRightX.insert(filename, arrayRightX);
+    m_filePatientStorageRightY.insert(filename, arrayRightY);
+    m_filePatientStorageRightZ.insert(filename, arrayRightZ);
+    m_filePatientStorageRightDeg.insert(filename, arrayRightDeg);
 
     m_filePatientStorageTime.insert(filename, arrayTime);
 
@@ -167,15 +181,13 @@ void MainWindow::on_loadPatientFileButton_pressed()
     file->close();
     delete streamOut;
     delete file;
+
+    ui->chartButton->setEnabled(true);
 }
 
 void MainWindow::on_deletePatientFileButton_pressed()
 {
     QString filename = ui->fileComboBox->currentText();
-
-    for(int i = 0; i < m_filePatientStorageLength.find(filename).value()+1; i++)
-       qDebug() << m_filePatientStorageLeftX.find(filename).value().at(i);
-
 
     m_filePatientStorageLeftX.find(filename).value().clear();
     m_filePatientStorageLeftY.find(filename).value().clear();
@@ -210,4 +222,88 @@ void MainWindow::on_deletePatientFileButton_pressed()
 
     ui->filePatientLabelInfo->setText("File deleted successfully!");
 
+}
+
+void MainWindow::on_restoreButton_pressed()
+{
+    ui->chartViewLeft->setVisible(true);
+    ui->chartViewLeft->setFloating(false);
+    ui->chartViewRight->setVisible(true);
+    ui->chartViewRight->setFloating(false);
+}
+
+void MainWindow::on_fileComboBox_currentIndexChanged(const QString &arg1)
+{
+    if(arg1 == "")
+        ui->chartButton->setEnabled(false);
+    else
+        ui->chartButton->setEnabled(true);
+}
+
+void MainWindow::on_chartButton_pressed()
+{
+    if(m_seriesLeft.keys().length() != 0)
+    {
+        for(auto e: m_seriesLeft.keys())
+        {
+            delete m_seriesLeft.value(e);
+            m_seriesLeft.remove(e);
+        }
+        for(auto e: m_seriesRight.keys())
+        {
+            delete m_seriesRight.value(e);
+            m_seriesRight.remove(e);
+        }
+    }
+
+    if(m_chartLeft != nullptr)
+        delete m_chartLeft;
+
+    if(m_chartRight != nullptr)
+        delete m_chartRight;
+
+    if(ui->radioButtonX->isChecked())
+    {
+        int max = 0 ;
+        for(auto e: m_filePatientStorageTime.keys())
+        {
+            QLineSeries *seriesLeft = new QLineSeries();
+            QLineSeries *seriesRight = new QLineSeries();
+            int temp = 0;
+            for(auto i: m_filePatientStorageTime.value(e))
+                seriesLeft->append(i, m_filePatientStorageLeftX.value(e).at(i*10));
+
+            for(auto i: m_filePatientStorageTime.value(e))
+                seriesRight->append(i, m_filePatientStorageRightX.value(e).at(i*10));
+
+            m_seriesLeft.insert(e, seriesLeft);
+            m_seriesRight.insert(e, seriesRight);
+            if(max < m_filePatientStorageTime.value(e).length())
+                max = m_filePatientStorageTime.value(e).length()/10;
+        }
+
+        m_chartLeft = new Chart(m_seriesLeft, "Left hand", "[s]", "axis X", max, 300, true);
+        m_chartRight = new Chart(m_seriesRight, "Right hand", "[s]", "axis X", max, 300, true);
+
+        ui->chartViewLeft->setWidget(m_chartLeft);
+        ui->chartViewRight->setWidget(m_chartRight);
+    }
+}
+
+void MainWindow::on_chartViewLeft_visibilityChanged(bool visible)
+{
+    if(ui->chartViewLeft->isFloating() || ui->chartViewLeft->isHidden() ||
+            ui->chartViewRight->isFloating() || ui->chartViewRight->isHidden())
+        ui->restoreButton->setEnabled(true);
+    else
+        ui->restoreButton->setEnabled(false);
+}
+
+void MainWindow::on_chartViewRight_visibilityChanged(bool visible)
+{
+    if(ui->chartViewLeft->isFloating() || ui->chartViewLeft->isHidden() ||
+            ui->chartViewRight->isFloating() || ui->chartViewRight->isHidden())
+        ui->restoreButton->setEnabled(true);
+    else
+        ui->restoreButton->setEnabled(false);
 }

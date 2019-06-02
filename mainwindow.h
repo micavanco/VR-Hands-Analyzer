@@ -6,6 +6,7 @@
 #include <QFileDialog>
 
 #include "camerathread.h"
+#include "chart.h"
 
 using namespace QtDataVisualization;
 
@@ -34,7 +35,19 @@ private slots:
 
     void on_deletePatientFileButton_pressed();
 
+    void on_restoreButton_pressed();
+
+
+    void on_chartButton_pressed();
+
+    void on_fileComboBox_currentIndexChanged(const QString &arg1);
+
+    void on_chartViewLeft_visibilityChanged(bool visible);
+
+    void on_chartViewRight_visibilityChanged(bool visible);
+
 private:
+
     Ui::MainWindow *ui;
     CameraThread   m_cameraThread;
     QTimer *timer;
@@ -44,6 +57,10 @@ private:
     QFile *file;
     QTextStream *streamOut;
     QString fileTitle;
+    Chart   *m_chartLeft;
+    Chart   *m_chartRight;
+    QMap<QString, QLineSeries*> m_seriesLeft;
+    QMap<QString, QLineSeries*> m_seriesRight;
     QMap<QString, QVector<double>>  m_filePatientStorageTime;
     QMap<QString, QVector<double>> m_filePatientStorageLeftX;
     QMap<QString, QVector<double>> m_filePatientStorageLeftY;

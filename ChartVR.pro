@@ -6,7 +6,7 @@
 
 QT       += core gui datavisualization
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets charts
 
 TARGET = ChartVR
 TEMPLATE = app
@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     samplelistener.cpp \
-    camerathread.cpp
+    camerathread.cpp \
+    chart.cpp
 
 HEADERS += \
         mainwindow.h \
     samplelistener.h \
-    camerathread.h
+    camerathread.h \
+    chart.h
 
 FORMS += \
         mainwindow.ui
