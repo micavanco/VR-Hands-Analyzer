@@ -46,6 +46,8 @@ private slots:
 
     void on_chartViewRight_visibilityChanged(bool visible);
 
+    void on_analysisButton_pressed();
+
 private:
 
     Ui::MainWindow *ui;
@@ -59,9 +61,10 @@ private:
     QString fileTitle;
     Chart   *m_chartLeft;
     Chart   *m_chartRight;
-    QMap<QString, QLineSeries*> m_seriesLeft;
-    QMap<QString, QLineSeries*> m_seriesRight;
-    QMap<QString, QVector<double>>  m_filePatientStorageTime;
+    QMap<QString, double>          m_seriesLength;
+    QMap<QString, QLineSeries*>    m_seriesLeft;
+    QMap<QString, QLineSeries*>    m_seriesRight;
+    QMap<QString, QVector<double>> m_filePatientStorageTime;
     QMap<QString, QVector<double>> m_filePatientStorageLeftX;
     QMap<QString, QVector<double>> m_filePatientStorageLeftY;
     QMap<QString, QVector<double>> m_filePatientStorageLeftZ;
@@ -70,7 +73,7 @@ private:
     QMap<QString, QVector<double>> m_filePatientStorageRightY;
     QMap<QString, QVector<double>> m_filePatientStorageRightZ;
     QMap<QString, QVector<double>> m_filePatientStorageRightDeg;
-    QMap<QString, int>     m_filePatientStorageLength;
+    QMap<QString, int>             m_filePatientStorageLength;
 };
 
 #endif // MAINWINDOW_H

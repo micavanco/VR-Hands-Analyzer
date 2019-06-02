@@ -6,17 +6,15 @@ Chart::Chart(QMap<QString, QLineSeries*> series, QString title, QString axisXLab
       m_rangeX(rangeX), m_rangeY(rangeY), m_series(series), m_hasMinus(hasMinus)
 {
         // przypisanie nazwy serii danych oraz dodanie do wykresu
-    m_i = 0;
     m_chart = new QChart();
     for(auto e: series.keys())
     {
         QLineSeries* s = series.value(e);
         s->setName(e);
-        QPen   pen = QPen(QColor(100+m_i, 50+m_i, m_i, 250-m_i), 2);
+        QPen   pen = QPen(QColor(qrand() % 255, qrand() % 255, qrand() % 255, 250), 2);
         m_pen.append(pen);
         s->setPen(pen);
         m_chart->addSeries(s);
-        m_i+=60;
         connect(s, &QLineSeries::hovered, this, &Chart::showWindowCoord);
         m_series.insert(e, s);
     }
@@ -55,6 +53,7 @@ Chart::~Chart()
     delete m_coord; // usuwanie obiektu wyświetlającego koordynacje kursora
     delete m_chart; // usuwanie obiektu wykresu
 }
+
 // metoda odbierająca dane z sygnału najechania kursorem na wykres w postaci parametrów funkcji
 void Chart::showWindowCoord(QPointF point, bool state)
 {
@@ -71,29 +70,6 @@ void Chart::showWindowCoord(QPointF point, bool state)
         this->setCursor(Qt::OpenHandCursor); // ustawienie kursora otwartej dłoni
         m_coord->hide(); // ukrycie okna
     }
-}
-// obliczanie pola powierzchni za pomocą metody całkowej - metoda trapezów
-void Chart::calculateIntegral()
-{
-    /*double surface1 = 0, surface2 = 0;
-    // dy - różnica pomiędzy y1, a y2
-    double y1, y2, dy;
-    for(int i = 0; i < m_rangeX; i++)
-    {
-        // obliczanie powierzchni dla serii 1
-        y1 = m_series1->at(i).y();
-        y2 = m_series1->at(i+1).y();
-        dy = (y2 - y1)/2;
-        surface1 += (y1 + dy);
-        // obliczanie powierzchni dla serii 2
-        y1 = m_series2->at(i).y();
-        y2 = m_series2->at(i+1).y();
-        dy = (y2 - y1)/2;
-        surface2 += (y1 + dy);
-    }
-
-    m_surface1 = surface1;
-    m_surface2 = surface2;*/
 }
 //  metoda obsługi zdarzeń pokrętła myszki
 void Chart::wheelEvent(QWheelEvent *event)

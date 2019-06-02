@@ -47,7 +47,7 @@ void MainWindow::on_turnOffButton_pressed()
 void MainWindow::on_recordButton_pressed()
 {
     // pobierz aktualny czas oraz utwórz nowy plik tekstowy z datą w nazwie
-    fileTitle = QTime::currentTime().toString("hh_mm_ss")+"-"+ui->patientLineEdit->text()+"-attempt-"+QString("%1").arg(ui->attemptSpinBox->value());
+    fileTitle = QTime::currentTime().toString("hh_mm_ss")+QString("[%1][").arg(ui->attemptSpinBox->value())+ui->patientLineEdit->text()+"]";
     file = new QFile("output/"+fileTitle+".csv");
     file->open(QIODevice::ReadWrite | QIODevice::Text);
     // utwórz obiekt do transmisji danych do pliku oraz prześlij dwa wiersze
@@ -265,16 +265,28 @@ void MainWindow::on_chartButton_pressed()
     if(ui->radioButtonX->isChecked())
     {
         int max = 0 ;
+        double leftMax = 0.0;
+        double rightMax = 0.0;
         for(auto e: m_filePatientStorageTime.keys())
         {
             QLineSeries *seriesLeft = new QLineSeries();
             QLineSeries *seriesRight = new QLineSeries();
             int temp = 0;
             for(auto i: m_filePatientStorageTime.value(e))
+            {
                 seriesLeft->append(i, m_filePatientStorageLeftX.value(e).at(i*10));
+                if(leftMax < qAbs(m_filePatientStorageLeftX.value(e).at(i*10)) )
+                    leftMax = qAbs(m_filePatientStorageLeftX.value(e).at(i*10));
+            }
+
 
             for(auto i: m_filePatientStorageTime.value(e))
+            {
                 seriesRight->append(i, m_filePatientStorageRightX.value(e).at(i*10));
+                if(rightMax < qAbs(m_filePatientStorageRightX.value(e).at(i*10)))
+                    rightMax = qAbs(m_filePatientStorageRightX.value(e).at(i*10));
+            }
+
 
             m_seriesLeft.insert(e, seriesLeft);
             m_seriesRight.insert(e, seriesRight);
@@ -282,8 +294,119 @@ void MainWindow::on_chartButton_pressed()
                 max = m_filePatientStorageTime.value(e).length()/10;
         }
 
-        m_chartLeft = new Chart(m_seriesLeft, "Left hand", "[s]", "axis X", max, 300, true);
-        m_chartRight = new Chart(m_seriesRight, "Right hand", "[s]", "axis X", max, 300, true);
+        m_chartLeft = new Chart(m_seriesLeft, "Left hand", "[s]", "axis X", max, leftMax, true);
+        m_chartRight = new Chart(m_seriesRight, "Right hand", "[s]", "axis X", max, rightMax, true);
+
+        ui->chartViewLeft->setWidget(m_chartLeft);
+        ui->chartViewRight->setWidget(m_chartRight);
+    }else if(ui->radioButtonY->isChecked())
+    {
+        int max = 0 ;
+        double leftMax = 0.0;
+        double rightMax = 0.0;
+        for(auto e: m_filePatientStorageTime.keys())
+        {
+            QLineSeries *seriesLeft = new QLineSeries();
+            QLineSeries *seriesRight = new QLineSeries();
+            int temp = 0;
+            for(auto i: m_filePatientStorageTime.value(e))
+            {
+                seriesLeft->append(i, m_filePatientStorageLeftY.value(e).at(i*10));
+                if(leftMax < qAbs(m_filePatientStorageLeftY.value(e).at(i*10)) )
+                    leftMax = qAbs(m_filePatientStorageLeftY.value(e).at(i*10));
+            }
+
+
+            for(auto i: m_filePatientStorageTime.value(e))
+            {
+                seriesRight->append(i, m_filePatientStorageRightY.value(e).at(i*10));
+                if(rightMax < qAbs(m_filePatientStorageRightY.value(e).at(i*10)))
+                    rightMax = qAbs(m_filePatientStorageRightY.value(e).at(i*10));
+            }
+
+
+            m_seriesLeft.insert(e, seriesLeft);
+            m_seriesRight.insert(e, seriesRight);
+            if(max < m_filePatientStorageTime.value(e).length())
+                max = m_filePatientStorageTime.value(e).length()/10;
+        }
+
+        m_chartLeft = new Chart(m_seriesLeft, "Left hand", "[s]", "axis Y", max, leftMax, false);
+        m_chartRight = new Chart(m_seriesRight, "Right hand", "[s]", "axis Y", max, rightMax, false);
+
+        ui->chartViewLeft->setWidget(m_chartLeft);
+        ui->chartViewRight->setWidget(m_chartRight);
+    }else if(ui->radioButtonZ->isChecked())
+    {
+        int max = 0 ;
+        double leftMax = 0.0;
+        double rightMax = 0.0;
+        for(auto e: m_filePatientStorageTime.keys())
+        {
+            QLineSeries *seriesLeft = new QLineSeries();
+            QLineSeries *seriesRight = new QLineSeries();
+            int temp = 0;
+            for(auto i: m_filePatientStorageTime.value(e))
+            {
+                seriesLeft->append(i, m_filePatientStorageLeftZ.value(e).at(i*10));
+                if(leftMax < qAbs(m_filePatientStorageLeftZ.value(e).at(i*10)) )
+                    leftMax = qAbs(m_filePatientStorageLeftZ.value(e).at(i*10));
+            }
+
+
+            for(auto i: m_filePatientStorageTime.value(e))
+            {
+                seriesRight->append(i, m_filePatientStorageRightZ.value(e).at(i*10));
+                if(rightMax < qAbs(m_filePatientStorageRightZ.value(e).at(i*10)))
+                    rightMax = qAbs(m_filePatientStorageRightZ.value(e).at(i*10));
+            }
+
+
+            m_seriesLeft.insert(e, seriesLeft);
+            m_seriesRight.insert(e, seriesRight);
+            if(max < m_filePatientStorageTime.value(e).length())
+                max = m_filePatientStorageTime.value(e).length()/10;
+        }
+
+        m_chartLeft = new Chart(m_seriesLeft, "Left hand", "[s]", "axis Z", max, leftMax, true);
+        m_chartRight = new Chart(m_seriesRight, "Right hand", "[s]", "axis Z", max, rightMax, true);
+
+        ui->chartViewLeft->setWidget(m_chartLeft);
+        ui->chartViewRight->setWidget(m_chartRight);
+    }else if(ui->radioButtonDeg->isChecked())
+    {
+        int max = 0 ;
+        double leftMax = 0.0;
+        double rightMax = 0.0;
+        for(auto e: m_filePatientStorageTime.keys())
+        {
+            QLineSeries *seriesLeft = new QLineSeries();
+            QLineSeries *seriesRight = new QLineSeries();
+            int temp = 0;
+            for(auto i: m_filePatientStorageTime.value(e))
+            {
+                seriesLeft->append(i, m_filePatientStorageLeftDeg.value(e).at(i*10));
+                if(leftMax < qAbs(m_filePatientStorageLeftDeg.value(e).at(i*10)) )
+                    leftMax = qAbs(m_filePatientStorageLeftDeg.value(e).at(i*10));
+            }
+
+
+            for(auto i: m_filePatientStorageTime.value(e))
+            {
+                seriesRight->append(i, m_filePatientStorageRightDeg.value(e).at(i*10));
+                if(rightMax < qAbs(m_filePatientStorageRightDeg.value(e).at(i*10)))
+                    rightMax = qAbs(m_filePatientStorageRightDeg.value(e).at(i*10));
+            }
+
+
+            m_seriesLeft.insert(e, seriesLeft);
+            m_seriesRight.insert(e, seriesRight);
+            if(max < m_filePatientStorageTime.value(e).length())
+                max = m_filePatientStorageTime.value(e).length()/10;
+        }
+
+        m_chartLeft = new Chart(m_seriesLeft, "Left hand", "[s]", "axis Degree", max, leftMax, false);
+        m_chartRight = new Chart(m_seriesRight, "Right hand", "[s]", "axis Degree", max, rightMax, false);
 
         ui->chartViewLeft->setWidget(m_chartLeft);
         ui->chartViewRight->setWidget(m_chartRight);
@@ -306,4 +429,24 @@ void MainWindow::on_chartViewRight_visibilityChanged(bool visible)
         ui->restoreButton->setEnabled(true);
     else
         ui->restoreButton->setEnabled(false);
+}
+
+void MainWindow::on_analysisButton_pressed()
+{/*
+    double y1, y2, l = 0.0;
+    for(auto e : m_series.keys())
+        m_seriesLength.insert(e, l);
+
+    for(int i = 0; i < m_rangeX; i++)
+    {
+        for(auto e : m_series.keys())
+        {
+            y1 = m_series.value(e)->at(i).y();
+            y2 = m_series.value(e)->at(i+1).y();
+            l = qSqrt(y1*y1+y2*y2);
+            double t = m_seriesLength.value(e);
+            t += l;
+            m_seriesLength.insert(e, t);
+        }
+    }*/
 }

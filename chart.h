@@ -5,6 +5,7 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
 #include <QtCharts/QValueAxis>
+#include <QtMath>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -16,8 +17,7 @@ public:
                    bool hasMinus = false, QWidget *parent = nullptr);
     ~Chart();
 
-    double getSurfaceInfo1(){return m_surface1;}
-    double getSurfaceInfo2(){return m_surface2;}
+
 signals:
 
 public slots:
@@ -33,13 +33,9 @@ private:
     QVector<QPen>   m_pen;
     QMap<QString, QLineSeries*> m_series;
     QChart* m_chart;
-    int     m_i;
-    double m_surface1;                  // pole powierzchni pierwszego przebiegu
-    double m_surface2;                  // pole powierzchni drugiego przebiegu
     bool   m_hasMinus;
 
 
-    void calculateIntegral();             // obliczenie pola powierzchni za pomocą metody całkowej
     void wheelEvent(QWheelEvent *event);        // metoda obsługi zdarzeń pokrętła myszki
     void mousePressEvent(QMouseEvent *event);   // metoda obsługi zdarzeń naciśnięcia klawisza myszki
     void mouseReleaseEvent(QMouseEvent *event); // metoda obsługi zdarzeń puszczenia klawisza myszki

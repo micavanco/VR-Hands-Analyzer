@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
+    <width>1085</width>
     <height>543</height>
    </rect>
   </property>
@@ -26,7 +26,7 @@
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>340</height>
+        <height>380</height>
        </size>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
@@ -167,6 +167,16 @@
            </property>
            <property name="text">
             <string>Restore Chart Window</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="analysisButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Generate Analysis</string>
            </property>
           </widget>
          </item>
