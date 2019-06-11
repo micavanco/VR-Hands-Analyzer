@@ -183,6 +183,7 @@ void MainWindow::on_loadPatientFileButton_pressed()
     delete file;
 
     ui->chartButton->setEnabled(true);
+    ui->analysisButton->setEnabled(true);
 }
 
 void MainWindow::on_deletePatientFileButton_pressed()
@@ -221,6 +222,12 @@ void MainWindow::on_deletePatientFileButton_pressed()
     m_filePatientStorageLength.remove(filename);
 
     ui->filePatientLabelInfo->setText("File deleted successfully!");
+
+    if(ui->fileComboBox->currentText() == "")
+    {
+        ui->chartButton->setEnabled(false);
+        ui->analysisButton->setEnabled(false);
+    }
 
 }
 
@@ -432,21 +439,75 @@ void MainWindow::on_chartViewRight_visibilityChanged(bool visible)
 }
 
 void MainWindow::on_analysisButton_pressed()
-{/*
-    double y1, y2, l = 0.0;
-    for(auto e : m_series.keys())
-        m_seriesLength.insert(e, l);
+{
+    qreal sumXleft;
+    qreal sumYleft;
+    qreal sumZleft;
+    qreal sumDegleft;
 
-    for(int i = 0; i < m_rangeX; i++)
+    qreal sumXright;
+    qreal sumYright;
+    qreal sumZright;
+    qreal sumDegright;
+
+    double dx;
+
+    // pobierz aktualny czas oraz utwórz nowy plik tekstowy z datą w nazwie
+    fileTitle = QTime::currentTime().toString("hh_mm_ss_analysis")+QString("[%1][").arg(ui->attemptSpinBox->value())+ui->patientLineEdit->text()+"]";
+    file = new QFile("analysis/"+fileTitle+".csv");
+    file->open(QIODevice::ReadWrite | QIODevice::Text);
+    // utwórz obiekt do transmisji danych do pliku oraz prześlij dwa wiersze
+    streamOut = new QTextStream(file);
+    *streamOut << QTime::currentTime().toString("hh:mm:ss")+"\n";
+    *streamOut << "Left Hand;;;;;Right Hand\n";
+    *streamOut << "[x];[y];[z];["+QString(176)+"];;[x];[y];[z];["+QString(176)+"]\n";
+
+    for(auto e: m_filePatientStorageTime.keys())
     {
-        for(auto e : m_series.keys())
+        for(int i = 0; i < m_filePatientStorageTime.value(e).length()-1; i++)
         {
-            y1 = m_series.value(e)->at(i).y();
-            y2 = m_series.value(e)->at(i+1).y();
-            l = qSqrt(y1*y1+y2*y2);
-            double t = m_seriesLength.value(e);
-            t += l;
-            m_seriesLength.insert(e, t);
+            dx = qAbs(m_filePatientStorageLeftX.value(e).at(i))-qAbs(m_filePatientStorageLeftX.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            if(qIsNaN(dx))
+                sumXleft += dx;
+            dx = qAbs(m_filePatientStorageLeftY.value(e).at(i))-qAbs(m_filePatientStorageLeftY.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            if(qIsNaN(dx))
+                sumYleft += dx;
+            dx = qAbs(m_filePatientStorageLeftZ.value(e).at(i))-qAbs(m_filePatientStorageLeftZ.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            if(qIsNaN(dx))
+                sumZleft += dx;
+            dx = qAbs(m_filePatientStorageLeftDeg.value(e).at(i))-qAbs(m_filePatientStorageLeftDeg.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            if(qIsNaN(dx))
+                sumDegleft += dx;
+
+            dx = qAbs(m_filePatientStorageRightX.value(e).at(i))-qAbs(m_filePatientStorageRightX.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            if(qIsNaN(dx))
+                sumXright += dx;
+            dx = qAbs(m_filePatientStorageRightY.value(e).at(i))-qAbs(m_filePatientStorageRightY.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            if(qIsNaN(dx))
+                sumYright += dx;
+            dx = qAbs(m_filePatientStorageRightZ.value(e).at(i))-qAbs(m_filePatientStorageRightZ.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            if(qIsNaN(dx))
+                sumZright += dx;
+            dx = qAbs(m_filePatientStorageRightDeg.value(e).at(i))-qAbs(m_filePatientStorageRightDeg.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            if(qIsNaN(dx))
+                sumDegright += dx;
         }
-    }*/
+        *streamOut << QString("%1;%2;%3;%4;;%5;%6;%7;%8").arg(sumXleft)
+                      .arg(sumYleft).arg(sumZleft).arg(sumDegleft)
+                      .arg(sumXright)
+                      .arg(sumYright).arg(sumZright).arg(sumDegright)+"\n";
+    }
+    ui->filePatientLabelInfo->setText("Analysis saved to file successfully!");
+    file->flush();
+    file->close();
+    delete file;
+    delete streamOut;
 }

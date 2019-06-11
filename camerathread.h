@@ -2,6 +2,7 @@
 #define CAMERATHREAD_H
 
 #include <QThread>
+#include <QtMath>
 #include "Leap.h"
 #include "samplelistener.h"
 using namespace Leap;
