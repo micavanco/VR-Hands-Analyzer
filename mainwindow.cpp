@@ -95,7 +95,7 @@ void MainWindow::onTimerTimeout()
         ui->timeSpinBox->setEnabled(true);
         ui->turnOffButton->setEnabled(true);
         ui->recordButton->setEnabled(true);
-        ui->timeToEndLabel->setText("Zapisano do "+fileTitle+".csv");
+        ui->timeToEndLabel->setText("Saved to: "+fileTitle+".csv");
     }
 }
 
@@ -189,6 +189,12 @@ void MainWindow::on_loadPatientFileButton_pressed()
 void MainWindow::on_deletePatientFileButton_pressed()
 {
     QString filename = ui->fileComboBox->currentText();
+
+    if(filename.isEmpty())
+    {
+        ui->filePatientLabelInfo->setText("Storage is empty!");
+        return;
+    }
 
     m_filePatientStorageLeftX.find(filename).value().clear();
     m_filePatientStorageLeftY.find(filename).value().clear();
@@ -444,13 +450,15 @@ void MainWindow::on_analysisButton_pressed()
     qreal sumYleft;
     qreal sumZleft;
     qreal sumDegleft;
+    double timeOpenLeft = -1;
 
     qreal sumXright;
     qreal sumYright;
     qreal sumZright;
     qreal sumDegright;
+    double timeOpenRight = -1;
 
-    double dx;
+    qreal dx;
 
     // pobierz aktualny czas oraz utwórz nowy plik tekstowy z datą w nazwie
     fileTitle = QTime::currentTime().toString("hh_mm_ss_analysis")+QString("[%1][").arg(ui->attemptSpinBox->value())+ui->patientLineEdit->text()+"]";
@@ -460,50 +468,56 @@ void MainWindow::on_analysisButton_pressed()
     streamOut = new QTextStream(file);
     *streamOut << QTime::currentTime().toString("hh:mm:ss")+"\n";
     *streamOut << "Left Hand;;;;;Right Hand\n";
-    *streamOut << "[x];[y];[z];["+QString(176)+"];;[x];[y];[z];["+QString(176)+"]\n";
+    *streamOut << "[x];[y];[z];["+QString(176)+"];[s];;[x];[y];[z];["+QString(176)+"];[s]\n";
 
     for(auto e: m_filePatientStorageTime.keys())
     {
         for(int i = 0; i < m_filePatientStorageTime.value(e).length()-1; i++)
         {
-            dx = qAbs(m_filePatientStorageLeftX.value(e).at(i))-qAbs(m_filePatientStorageLeftX.value(e).at(i+1));
-            dx = qSqrt(dx*dx+1);
-            if(qIsNaN(dx))
-                sumXleft += dx;
-            dx = qAbs(m_filePatientStorageLeftY.value(e).at(i))-qAbs(m_filePatientStorageLeftY.value(e).at(i+1));
-            dx = qSqrt(dx*dx+1);
-            if(qIsNaN(dx))
-                sumYleft += dx;
-            dx = qAbs(m_filePatientStorageLeftZ.value(e).at(i))-qAbs(m_filePatientStorageLeftZ.value(e).at(i+1));
-            dx = qSqrt(dx*dx+1);
-            if(qIsNaN(dx))
-                sumZleft += dx;
-            dx = qAbs(m_filePatientStorageLeftDeg.value(e).at(i))-qAbs(m_filePatientStorageLeftDeg.value(e).at(i+1));
-            dx = qSqrt(dx*dx+1);
-            if(qIsNaN(dx))
-                sumDegleft += dx;
 
-            dx = qAbs(m_filePatientStorageRightX.value(e).at(i))-qAbs(m_filePatientStorageRightX.value(e).at(i+1));
+            dx = qAbs(m_filePatientStorageLeftX.value(e).at(i)-m_filePatientStorageLeftX.value(e).at(i+1));
             dx = qSqrt(dx*dx+1);
-            if(qIsNaN(dx))
-                sumXright += dx;
-            dx = qAbs(m_filePatientStorageRightY.value(e).at(i))-qAbs(m_filePatientStorageRightY.value(e).at(i+1));
+            sumXleft += dx;
+
+            dx = qAbs(m_filePatientStorageLeftY.value(e).at(i)-m_filePatientStorageLeftY.value(e).at(i+1));
             dx = qSqrt(dx*dx+1);
-            if(qIsNaN(dx))
-                sumYright += dx;
-            dx = qAbs(m_filePatientStorageRightZ.value(e).at(i))-qAbs(m_filePatientStorageRightZ.value(e).at(i+1));
+            sumYleft += dx;
+
+            dx =  qAbs(m_filePatientStorageLeftZ.value(e).at(i)-m_filePatientStorageLeftZ.value(e).at(i+1));
             dx = qSqrt(dx*dx+1);
-            if(qIsNaN(dx))
-                sumZright += dx;
-            dx = qAbs(m_filePatientStorageRightDeg.value(e).at(i))-qAbs(m_filePatientStorageRightDeg.value(e).at(i+1));
+            sumZleft += dx;
+
+            dx = qAbs(m_filePatientStorageLeftDeg.value(e).at(i)-m_filePatientStorageLeftDeg.value(e).at(i+1));
             dx = qSqrt(dx*dx+1);
-            if(qIsNaN(dx))
-                sumDegright += dx;
+            sumDegleft += dx;
+
+            if(m_filePatientStorageLeftDeg.value(e).at(i) > 1 && m_filePatientStorageLeftDeg.value(e).at(i) < 100)
+                timeOpenLeft += 1;
+
+
+            dx = qAbs(m_filePatientStorageRightX.value(e).at(i)-m_filePatientStorageRightX.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            sumXright += dx;
+
+            dx = qAbs(m_filePatientStorageRightY.value(e).at(i)-m_filePatientStorageRightY.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            sumYright += dx;
+
+            dx = qAbs(m_filePatientStorageRightZ.value(e).at(i)-m_filePatientStorageRightZ.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            sumZright += dx;
+
+            dx = qAbs(m_filePatientStorageRightDeg.value(e).at(i)-m_filePatientStorageRightDeg.value(e).at(i+1));
+            dx = qSqrt(dx*dx+1);
+            sumDegright += dx;
+
+            if(m_filePatientStorageRightDeg.value(e).at(i) > 1 && m_filePatientStorageRightDeg.value(e).at(i) < 100)
+                timeOpenRight += 1;
         }
-        *streamOut << QString("%1;%2;%3;%4;;%5;%6;%7;%8").arg(sumXleft)
-                      .arg(sumYleft).arg(sumZleft).arg(sumDegleft)
+        *streamOut << QString("%1;%2;%3;%4;%5;;%6;%7;%8;%9;%10").arg(sumXleft)
+                      .arg(sumYleft).arg(sumZleft).arg(sumDegleft).arg(timeOpenLeft/10)
                       .arg(sumXright)
-                      .arg(sumYright).arg(sumZright).arg(sumDegright)+"\n";
+                      .arg(sumYright).arg(sumZright).arg(sumDegright).arg(timeOpenRight/10)+"\n";
     }
     ui->filePatientLabelInfo->setText("Analysis saved to file successfully!");
     file->flush();
